@@ -1,0 +1,1 @@
+Please use chrome to view this game.

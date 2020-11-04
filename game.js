@@ -1,20 +1,23 @@
 // The point and size class used in this program
 function Point(x, y) {
-    this.x = (x)? parseFloat(x) : 0.0;
-    this.y = (y)? parseFloat(y) : 0.0;
+    this.x = x ? parseFloat(x) : 0.0;
+    this.y = y ? parseFloat(y) : 0.0;
 }
 
 function Size(w, h) {
-    this.w = (w)? parseFloat(w) : 0.0;
-    this.h = (h)? parseFloat(h) : 0.0;
+    this.w = w ? parseFloat(w) : 0.0;
+    this.h = h ? parseFloat(h) : 0.0;
 }
 
 // Helper function for checking intersection between two rectangles
 function intersect(pos1, size1, pos2, size2) {
-    return (pos1.x < pos2.x + size2.w && pos1.x + size1.w > pos2.x &&
-            pos1.y < pos2.y + size2.h && pos1.y + size1.h > pos2.y);
+    return (
+        pos1.x < pos2.x + size2.w &&
+        pos1.x + size1.w > pos2.x &&
+        pos1.y < pos2.y + size2.h &&
+        pos1.y + size1.h > pos2.y
+    );
 }
-
 
 // The player class used in this program
 function Player() {
@@ -22,9 +25,11 @@ function Player() {
     this.position = PLAYER_INIT_POS;
     this.motion = motionType.NONE;
     this.verticalSpeed = 0;
+    this.life = 100; //life set as player
+    this.name = "Player"; //Name attribute
 }
 
-Player.prototype.isOnPlatform = function() {
+Player.prototype.isOnPlatform = function () {
     var platforms = document.getElementById("platforms");
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
@@ -35,17 +40,21 @@ Player.prototype.isOnPlatform = function() {
         var w = parseFloat(node.getAttribute("width"));
         var h = parseFloat(node.getAttribute("height"));
 
-        if (((this.position.x + PLAYER_SIZE.w > x && this.position.x < x + w) ||
-             ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
-             (this.position.x == (x + w) && this.motion == motionType.LEFT)) &&
-            this.position.y + PLAYER_SIZE.h == y) return true;
+        if (
+            ((this.position.x + PLAYER_SIZE.w > x && this.position.x < x + w) ||
+                (this.position.x + PLAYER_SIZE.w == x &&
+                    this.motion == motionType.RIGHT) ||
+                (this.position.x == x + w && this.motion == motionType.LEFT)) &&
+            this.position.y + PLAYER_SIZE.h == y
+        )
+            return true;
     }
     if (this.position.y + PLAYER_SIZE.h == SCREEN_SIZE.h) return true;
 
     return false;
-}
+};
 
-Player.prototype.collidePlatform = function(position) {
+Player.prototype.collidePlatform = function (position) {
     var platforms = document.getElementById("platforms");
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
@@ -61,19 +70,18 @@ Player.prototype.collidePlatform = function(position) {
         if (intersect(position, PLAYER_SIZE, pos, size)) {
             position.x = this.position.x;
             if (intersect(position, PLAYER_SIZE, pos, size)) {
-                if (this.position.y >= y + h)
-                    position.y = y + h;
-                else
-                    position.y = y - PLAYER_SIZE.h;
+                if (this.position.y >= y + h) position.y = y + h;
+                else position.y = y - PLAYER_SIZE.h;
                 this.verticalSpeed = 0;
             }
         }
     }
-}
+};
 
-Player.prototype.collideScreen = function(position) {
+Player.prototype.collideScreen = function (position) {
     if (position.x < 0) position.x = 0;
-    if (position.x + PLAYER_SIZE.w > SCREEN_SIZE.w) position.x = SCREEN_SIZE.w - PLAYER_SIZE.w;
+    if (position.x + PLAYER_SIZE.w > SCREEN_SIZE.w)
+        position.x = SCREEN_SIZE.w - PLAYER_SIZE.w;
     if (position.y < 0) {
         position.y = 0;
         this.verticalSpeed = 0;
@@ -82,32 +90,29 @@ Player.prototype.collideScreen = function(position) {
         position.y = SCREEN_SIZE.h - PLAYER_SIZE.h;
         this.verticalSpeed = 0;
     }
-}
-
+};
 
 //
 // Below are constants used in the game
 //
-var PLAYER_SIZE = new Size(40, 40);         // The size of the player
-var SCREEN_SIZE = new Size(600, 560);       // The size of the game screen
-var PLAYER_INIT_POS  = new Point(0, 0);     // The initial position of the player
+var PLAYER_SIZE = new Size(40, 40); // The size of the player
+var SCREEN_SIZE = new Size(600, 560); // The size of the game screen
+var PLAYER_INIT_POS = new Point(0, 0); // The initial position of the player
 
-var MOVE_DISPLACEMENT = 5;                  // The speed of the player in motion
-var JUMP_SPEED = 15;                        // The speed of the player jumping
-var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical speed
+var MOVE_DISPLACEMENT = 5; // The speed of the player in motion
+var JUMP_SPEED = 15; // The speed of the player jumping
+var VERTICAL_DISPLACEMENT = 1; // The displacement of vertical speed
 
-var GAME_INTERVAL = 25;                     // The time interval of running the game
-
+var GAME_INTERVAL = 25; // The time interval of running the game
 
 //
 // Variables in the game
 //
-var motionType = {NONE:0, LEFT:1, RIGHT:2}; // Motion enum
+var motionType = { NONE: 0, LEFT: 1, RIGHT: 2 }; // Motion enum
 
-var player = null;                          // The player object
-var gameInterval = null;                    // The interval
-var zoom = 1.0;                             // The zoom level of the screen
-
+var player = null; // The player object
+var gameInterval = null; // The interval
+var zoom = 1.0; // The zoom level of the screen
 
 // Should be executed after the page is loaded
 function load() {
@@ -118,34 +123,36 @@ function load() {
     // Create the player
     player = new Player();
     // Create the monsters as well
-    var monster =new createMonster(200,15);
+    var monster = new createMonster(200, 15);
 
     // Start the game interval
     gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
-
 }
 
-
+function changeDirection() {
+    var playerObject = document.getElementById("Shuttle");
+    playerObject.setAttribute(
+        "transform",
+        "translate(" + player.size.w + ", 0) scale(-1, 1)"
+    );
+}
 //
 // This is the keydown handling function for the SVG document
 //
 function keydown(evt) {
-    var keyCode = (evt.keyCode)? evt.keyCode : evt.getKeyCode();
+    var keyCode = evt.keyCode ? evt.keyCode : evt.getKeyCode();
 
     switch (keyCode) {
-        case "N".charCodeAt(0):
+        case "A".charCodeAt(0):
             player.motion = motionType.LEFT;
             break;
 
-        case "M".charCodeAt(0):
+        case "D".charCodeAt(0):
             player.motion = motionType.RIGHT;
             break;
-			
 
         // Add your code here
-		
-			
-        case "Z".charCodeAt(0):
+        case "W".charCodeAt(0):
             if (player.isOnPlatform()) {
                 player.verticalSpeed = JUMP_SPEED;
             }
@@ -153,25 +160,25 @@ function keydown(evt) {
     }
 }
 
-
 //
 // This is the keyup handling function for the SVG document
 //
 function keyup(evt) {
     // Get the key code
-    var keyCode = (evt.keyCode)? evt.keyCode : evt.getKeyCode();
+    var keyCode = evt.keyCode ? evt.keyCode : evt.getKeyCode();
 
     switch (keyCode) {
-        case "N".charCodeAt(0):
-            if (player.motion == motionType.LEFT) player.motion = motionType.NONE;
+        case "A".charCodeAt(0):
+            if (player.motion == motionType.LEFT)
+                player.motion = motionType.NONE;
             break;
 
-        case "M".charCodeAt(0):
-            if (player.motion == motionType.RIGHT) player.motion = motionType.NONE;
+        case "D".charCodeAt(0):
+            if (player.motion == motionType.RIGHT)
+                player.motion = motionType.NONE;
             break;
     }
 }
-
 
 //
 // This function updates the position and motion of the player in the system
@@ -179,15 +186,13 @@ function keyup(evt) {
 function gamePlay() {
     // Check whether the player is on a platform
     var isOnPlatform = player.isOnPlatform();
-    
+
     // Update player position
     var displacement = new Point();
 
     // Move left or right
-    if (player.motion == motionType.LEFT)
-        displacement.x = -MOVE_DISPLACEMENT;
-    if (player.motion == motionType.RIGHT)
-        displacement.x = MOVE_DISPLACEMENT;
+    if (player.motion == motionType.LEFT) displacement.x = -MOVE_DISPLACEMENT;
+    if (player.motion == motionType.RIGHT) displacement.x = MOVE_DISPLACEMENT;
 
     // Fall
     if (!isOnPlatform && player.verticalSpeed <= 0) {
@@ -199,8 +204,7 @@ function gamePlay() {
     if (player.verticalSpeed > 0) {
         displacement.y = -player.verticalSpeed;
         player.verticalSpeed -= VERTICAL_DISPLACEMENT;
-        if (player.verticalSpeed <= 0)
-            player.verticalSpeed = 0;
+        if (player.verticalSpeed <= 0) player.verticalSpeed = 0;
     }
 
     // Get the new position of the player
@@ -218,11 +222,15 @@ function gamePlay() {
     updateScreen();
 }
 function createMonster(x, y) {
-   var monster = document.createElementNS("http://www.w3.org/2000/svg", "use");
-   document.getElementById("monsters").appendChild(monster);
-   monster.setAttribute("x", x);
-   monster.setAttribute("y", y);
-   monster.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#monster");
+    var monster = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    document.getElementById("monsters").appendChild(monster);
+    monster.setAttribute("x", x);
+    monster.setAttribute("y", y);
+    monster.setAttributeNS(
+        "http://www.w3.org/1999/xlink",
+        "xlink:href",
+        "#monster"
+    );
 }
 
 //
@@ -232,10 +240,12 @@ function createMonster(x, y) {
 //
 function updateScreen() {
     // Transform the player
-    player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
-            
-    // Calculate the scaling and translation factors	
-    
+    player.node.setAttribute(
+        "transform",
+        "translate(" + player.position.x + "," + player.position.y + ")"
+    );
+
+    // Calculate the scaling and translation factors
+
     // Add your code here
-	
 }
