@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SVG game</title>
+	<style>
+		.title{text-align: center;}
+
+	</style>
+	<script type="text/javascript">
+		function changeDirection()
+		{
+			var playerObject = document.getElementById("Shuttle");
+			playerObject.setAttribute("transform",
+                          "translate(" + player.size.w + ", 0) scale(-1, 1)");
+		}
+	</script>
+</head>
+<body>
+	<h1 class="title"> The Candy Hunt</h1>
+	<h3 class="title">To Ming San 8144</h3>
+	<p>
+		You are a candy hunter.You need to collecr as many candies as possible
+	</p>
+	<p>
+		Use the <strong>A</strong> key to go left.The <strong>D</strong> key to go right and the <strong>W</strong> key to jump
+		Meanwhile there are some monsters that are trying to stop you.Use the <strong>H</strong> to shoot and kill them.
+		Pick up the candies and go to the exit quicly.
+		You can press  <strong>C</strong> key to enable/disable the cheat mode as well
+		<!-- Toggle logic for C key -->
+	</p>
+
+	<button class="startButton">Start</button>
+
+</body>
+</html>
