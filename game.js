@@ -25,8 +25,10 @@ function Player() {
     this.position = PLAYER_INIT_POS;
     this.motion = motionType.NONE;
     this.verticalSpeed = 0;
-    this.life = 100; //life set as player
-    this.name = "Player"; //Name attribute
+    this.alive = true; //life set as player
+    var name = prompt("please enter your name") || "Anonymous"; //Name attribute
+    document.getElementById("name").innerHTML = name;
+    this.flip = true; //flip the player
 }
 
 Player.prototype.isOnPlatform = function () {
@@ -122,21 +124,14 @@ function load() {
 
     // Create the player
     player = new Player();
+
     // Create the monsters as well
-    var monster = new createMonster(200, 15);
+    // var monster = new createMonster(200, 15);
 
     // Start the game interval
     gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
 }
 
-function changeDirection() {
-    var playerObject = document.getElementById("Shuttle");
-    playerObject.setAttribute(
-        "transform",
-        "translate(" + player.size.w + ", 0) scale(-1, 1)"
-    );
-}
-//
 // This is the keydown handling function for the SVG document
 //
 function keydown(evt) {
@@ -145,10 +140,12 @@ function keydown(evt) {
     switch (keyCode) {
         case "A".charCodeAt(0):
             player.motion = motionType.LEFT;
+            player.flip = false;
             break;
 
         case "D".charCodeAt(0):
             player.motion = motionType.RIGHT;
+            player.flip = true;
             break;
 
         // Add your code here
@@ -240,12 +237,47 @@ function createMonster(x, y) {
 //
 function updateScreen() {
     // Transform the player
-    player.node.setAttribute(
-        "transform",
-        "translate(" + player.position.x + "," + player.position.y + ")"
-    );
-
     // Calculate the scaling and translation factors
-
+    var name = document.getElementById("name");
+    if (!player.flip) {
+        player.node.setAttribute(
+            "transform",
+            "translate(" + player.position.x + "," + player.position.y + ")"
+        );
+    } else {
+        player.node.setAttribute(
+            "transform",
+            "translate(" +
+                (player.position.x + PLAYER_SIZE.w) +
+                "," +
+                player.position.y +
+                ") scale(-1, 1)"
+        );
+    }
+    //deal with name
+    name.setAttribute("x", player.position.x + 25);
+    name.setAttribute("y", player.position.y - 3);
     // Add your code here
+}
+
+// Add your code here
+
+//set up timer and count down
+function timeLeft() {
+    var gameTime = 100000;
+    setTimeout(function () {
+        console.log("You have 100s to reach to the exit");
+    }, gameTime);
+
+    //update Timer on screen
+    while (gameTime > 0) {
+        setInterval(function () {
+            // code goes here
+            gameTime -= 1000;
+            document.getElementById("timer").innerHTML = gameTime;
+        }, 1000);
+    }
+    if (gameTime == 0) {
+        //endGame = true ;
+    }
 }

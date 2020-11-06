@@ -1,190 +1,833 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>SVG Game</title>
+        <script language="JavaScript" src="game.js"></script>
+    </head>
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>SVG Game</title>
-  <script language="JavaScript" src="game.js"></script>
-</head>
+    <body style="text-align: center" onload="load();">
+        <svg
+            width="800px"
+            height="600px"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:a="http://www.adobe.com/svg10-extensions"
+            a:timeline="independent"
+        >
+            <defs>
+                <clipPath id="gameareaclip">
+                    <rect x="20" y="20" width="600" height="560" />
+                </clipPath>
+                <pattern
+                    id="background_pattern"
+                    x="0"
+                    y="0"
+                    width="20"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                >
+                    <rect width="20" height="20" style="fill: yellow" />
+                    <circle cx="10" cy="10" r="8" style="fill: lightyellow" />
+                </pattern>
+                <radialGradient id="player_color">
+                    <stop
+                        offset="0.0"
+                        style="stop-color: yellow; stop-opacity: 1"
+                    />
+                    <stop
+                        offset="0.8"
+                        style="stop-color: yellow; stop-opacity: 1"
+                    />
+                    <stop
+                        offset="1.0"
+                        style="stop-color: orange; stop-opacity: 1"
+                    />
+                </radialGradient>
+            </defs>
 
-<body style="text-align: center" onload="load();">
-<svg width="800px" height="600px"
-     xmlns="http://www.w3.org/2000/svg"
-     xmlns:xhtml="http://www.w3.org/1999/xhtml"
-     xmlns:xlink="http://www.w3.org/1999/xlink"
-     xmlns:a="http://www.adobe.com/svg10-extensions" a:timeline="independent">
-
-  <defs>
-    <clipPath id="gameareaclip">
-      <rect x="20" y="20" width="600" height="560"/>
-    </clipPath>
-    <pattern id="background_pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-      <rect width="20" height="20" style="fill:yellow"/>
-      <circle cx="10" cy="10" r="8" style="fill:lightyellow"/>
-    </pattern>
-    <radialGradient id="player_color">
-      <stop offset="0.0" style="stop-color:yellow;stop-opacity:1"/>
-      <stop offset="0.8" style="stop-color:yellow;stop-opacity:1"/>
-      <stop offset="1.0" style="stop-color:orange;stop-opacity:1"/>
-    </radialGradient>
-  </defs>
- 
-
-  <defs>
-    <g id="monster">
-  <path d="M0,30 q0,-30 20,-30 t20,30 l0,10
+            <defs>
+                <g id="monster">
+                    <path
+                        d="M0,30 q0,-30 20,-30 t20,30 l0,10
            l-5,-7 l-5,7 l-5,-7 l-5,7 l-5,-7 l-5,7 l-5,-7 l-5,7 l0,-10"
-        style="fill:gray;fill-opacity:0.5;stroke:black;stroke-width:2"/>
-  <circle cx="12" cy="20" r="5"
-          style="fill:yellow;stroke:black;stroke-width:2">
-    <animateColor attributeName="fill" values="yellow;red;yellow"
-                  dur="1s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="28" cy="20" r="5"
-          style="fill:yellow;stroke:black;stroke-width:2">
-    <animateColor attributeName="fill" values="yellow;red;yellow"
-                  dur="1s" repeatCount="indefinite"/>
-  </circle>
-</g>
-  </defs>
+                        style="
+                            fill: gray;
+                            fill-opacity: 0.5;
+                            stroke: black;
+                            stroke-width: 2;
+                        "
+                    />
+                    <circle
+                        cx="12"
+                        cy="20"
+                        r="5"
+                        style="fill: yellow; stroke: black; stroke-width: 2"
+                    >
+                        <animateColor
+                            attributeName="fill"
+                            values="yellow;red;yellow"
+                            dur="1s"
+                            repeatCount="indefinite"
+                        />
+                    </circle>
+                    <circle
+                        cx="28"
+                        cy="20"
+                        r="5"
+                        style="fill: yellow; stroke: black; stroke-width: 2"
+                    >
+                        <animateColor
+                            attributeName="fill"
+                            values="yellow;red;yellow"
+                            dur="1s"
+                            repeatCount="indefinite"
+                        />
+                    </circle>
+                </g>
+            </defs>
 
-  <rect width="100%" height="100%" style="fill:url(#background_pattern);stroke:orange;stroke-width:4" />
+            <rect
+                width="100%"
+                height="100%"
+                style="
+                    fill: url(#background_pattern);
+                    stroke: orange;
+                    stroke-width: 4;
+                "
+            />
 
-  <rect x="20" y="20" width="600" height="560" style="fill:black;stroke:red;stroke-width:5" />
+            <rect
+                x="20"
+                y="20"
+                width="600"
+                height="560"
+                style="fill: black; stroke: red; stroke-width: 5"
+            />
 
-  <!-- Add your button here -->
+            <!-- Timer position -->
+            <text x="700" y="30">Time:</text>
+            <rect
+                x="680"
+                y="40"
+                width="80"
+                height="50"
+                style="fill: white; stroke: purple; stroke-width: 5"
+            />
 
-  <g style="clip-path:url(#gameareaclip)">
-    <g transform="translate(20,20)">
-      <g id="gamearea" transform="translate(0,0)" width="600" height="560">
-        <rect x="0" y="0" width="600" height="560" style="fill:white" />
+            <!-- Add your button here -->
 
-        <g id="platforms">
+            <g style="clip-path: url(#gameareaclip)">
+                <g transform="translate(20,20)">
+                    <g
+                        id="gamearea"
+                        transform="translate(0,0)"
+                        width="600"
+                        height="560"
+                    >
+                        <rect
+                            x="0"
+                            y="0"
+                            width="600"
+                            height="560"
+                            style="fill: white"
+                        />
 
-          <!-- Add your platforms here -->
+                        <g id="platforms">
+                            <!-- Add your platforms here -->
 
-            <!-- 60 -->
-            <rect style="fill:orange" width="60" height="20" x="0" y="60"/>
+                            <!-- 60 -->
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="0"
+                                y="60"
+                            />
 
-            <!-- 80 -->
-            <rect style="fill:orange" width="20" height="20" x="40" y="80"/>
+                            <!-- 80 -->
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="40"
+                                y="80"
+                            />
 
-            <!-- 100 -->
-            <rect style="fill:orange" width="480" height="20" x="40" y="100"/>
+                            <!-- 100 -->
+                            <rect
+                                style="fill: orange"
+                                width="480"
+                                height="20"
+                                x="40"
+                                y="100"
+                            />
 
-            <!-- 120 -->
-            <rect style="fill:orange" width="20" height="20" x="60" y="120"/>
-            <rect style="fill:orange" width="40" height="20" x="220" y="120"/>
+                            <!-- 120 -->
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="60"
+                                y="120"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="220"
+                                y="120"
+                            />
 
-            <!-- 140 -->
-            <rect style="fill:orange" width="40" height="20" x="220" y="140"/>
-            <rect style="fill:orange" width="40" height="20" x="560" y="140"/>
+                            <!-- 140 -->
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="220"
+                                y="140"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="560"
+                                y="140"
+                            />
 
-            <!-- 160 -->
-            <rect style="fill:orange" width="120" height="20" x="180" y="160"/>
-            <rect style="fill:orange" width="60" height="20" x="540" y="160"/>
+                            <!-- 160 -->
+                            <rect
+                                style="fill: orange"
+                                width="120"
+                                height="20"
+                                x="180"
+                                y="160"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="540"
+                                y="160"
+                            />
 
-            <!-- 180 -->
-            <rect style="fill:orange" width="20" height="20" x="0" y="180"/>
-            <rect style="fill:orange" width="20" height="20" x="100" y="180"/>
-            <rect style="fill:orange" width="20" height="20" x="380" y="180"/>
-            <rect style="fill:orange" width="80" height="20" x="520" y="180"/>
+                            <!-- 180 -->
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="0"
+                                y="180"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="100"
+                                y="180"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="380"
+                                y="180"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="80"
+                                height="20"
+                                x="520"
+                                y="180"
+                            />
 
-            <!-- 200 -->
-            <rect style="fill:orange" width="20" height="20" x="0" y="200"/>
-            <rect style="fill:orange" width="40" height="20" x="80" y="200"/>
-            <rect style="fill:orange" width="80" height="20" x="360" y="200"/>
+                            <!-- 200 -->
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="0"
+                                y="200"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="80"
+                                y="200"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="80"
+                                height="20"
+                                x="360"
+                                y="200"
+                            />
 
-            <!-- 220 -->
-            <rect style="fill:orange" width="160" height="20" x="0" y="220"/>
-            <rect style="fill:orange" width="140" height="20" x="320" y="220"/>
+                            <!-- 220 -->
+                            <rect
+                                style="fill: orange"
+                                width="160"
+                                height="20"
+                                x="0"
+                                y="220"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="140"
+                                height="20"
+                                x="320"
+                                y="220"
+                            />
 
-            <!-- 240 -->
-            <rect style="fill:orange" width="20" height="20" x="240" y="240"/>
-            <rect style="fill:orange" width="160" height="20" x="340" y="240"/>
+                            <!-- 240 -->
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="240"
+                                y="240"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="160"
+                                height="20"
+                                x="340"
+                                y="240"
+                            />
 
-            <!-- 260 -->
-            <rect style="fill:orange" width="60" height="20" x="220" y="260"/>
+                            <!-- 260 -->
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="220"
+                                y="260"
+                            />
 
-            <!-- 280 -->
-            <rect style="fill:orange" width="100" height="20" x="200" y="280"/>
-            <rect style="fill:orange" width="40" height="20" x="560" y="280"/>
+                            <!-- 280 -->
+                            <rect
+                                style="fill: orange"
+                                width="100"
+                                height="20"
+                                x="200"
+                                y="280"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="560"
+                                y="280"
+                            />
 
-            <!-- 300 -->
-            <rect style="fill:orange" width="100" height="20" x="120" y="300"/>
-            <rect style="fill:orange" width="40" height="20" x="280" y="300"/>
-            <rect style="fill:orange" width="100" height="20" x="500" y="300"/>
+                            <!-- 300 -->
+                            <rect
+                                style="fill: orange"
+                                width="100"
+                                height="20"
+                                x="120"
+                                y="300"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="280"
+                                y="300"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="100"
+                                height="20"
+                                x="500"
+                                y="300"
+                            />
 
-            <!-- 320 -->
-            <rect style="fill:orange" width="40" height="20" x="0" y="320"/>
-            <rect style="fill:orange" width="60" height="20" x="280" y="320"/>
-            <rect style="fill:orange" width="20" height="20" x="380" y="320"/>
+                            <!-- 320 -->
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="0"
+                                y="320"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="280"
+                                y="320"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="380"
+                                y="320"
+                            />
 
-            <!-- 340 -->
-            <rect style="fill:orange" width="60" height="20" x="0" y="340"/>
-            <rect style="fill:orange" width="20" height="20" x="320" y="340"/>
-            <rect style="fill:orange" width="60" height="20" x="380" y="340"/>
+                            <!-- 340 -->
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="0"
+                                y="340"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="320"
+                                y="340"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="380"
+                                y="340"
+                            />
 
-            <!-- 360 -->
-            <rect style="fill:orange" width="120" height="20" x="0" y="360"/>
-            <rect style="fill:orange" width="20" height="20" x="320" y="360"/>
-            <rect style="fill:orange" width="120" height="20" x="380" y="360"/>
+                            <!-- 360 -->
+                            <rect
+                                style="fill: orange"
+                                width="120"
+                                height="20"
+                                x="0"
+                                y="360"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="320"
+                                y="360"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="120"
+                                height="20"
+                                x="380"
+                                y="360"
+                            />
 
-            <!-- 380 -->
-            <rect style="fill:orange" width="100" height="20" x="0" y="380"/>
-            <rect style="fill:orange" width="20" height="20" x="220" y="380"/>
-            <rect style="fill:orange" width="20" height="20" x="580" y="380"/>
+                            <!-- 380 -->
+                            <rect
+                                style="fill: orange"
+                                width="100"
+                                height="20"
+                                x="0"
+                                y="380"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="220"
+                                y="380"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="580"
+                                y="380"
+                            />
 
-            <!-- 400 -->
-            <rect style="fill:orange" width="80" height="20" x="180" y="400"/>
-            <rect style="fill:orange" width="40" height="20" x="560" y="400"/>
+                            <!-- 400 -->
+                            <rect
+                                style="fill: orange"
+                                width="80"
+                                height="20"
+                                x="180"
+                                y="400"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="560"
+                                y="400"
+                            />
 
-            <!-- 420 -->
-            <rect style="fill:orange" width="200" height="20" x="160" y="420"/>
-            <rect style="fill:orange" width="60" height="20" x="540" y="420"/>
+                            <!-- 420 -->
+                            <rect
+                                style="fill: orange"
+                                width="200"
+                                height="20"
+                                x="160"
+                                y="420"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="540"
+                                y="420"
+                            />
 
-            <!-- 440 -->
-            <rect style="fill:orange" width="100" height="20" x="140" y="440"/>
-            <rect style="fill:orange" width="20" height="20" x="440" y="440"/>
-            <rect style="fill:orange" width="60" height="20" x="500" y="440"/>
+                            <!-- 440 -->
+                            <rect
+                                style="fill: orange"
+                                width="100"
+                                height="20"
+                                x="140"
+                                y="440"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="440"
+                                y="440"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="500"
+                                y="440"
+                            />
 
-            <!-- 460 -->
-            <rect style="fill:orange" width="60" height="20" x="120" y="460"/>
-            <rect style="fill:orange" width="60" height="20" x="400" y="460"/>
+                            <!-- 460 -->
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="120"
+                                y="460"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="400"
+                                y="460"
+                            />
 
-            <!-- 480 -->
-            <rect style="fill:orange" width="40" height="20" x="0" y="480"/>
-            <rect style="fill:orange" width="60" height="20" x="380" y="480"/>
+                            <!-- 480 -->
+                            <rect
+                                style="fill: orange"
+                                width="40"
+                                height="20"
+                                x="0"
+                                y="480"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="380"
+                                y="480"
+                            />
 
-            <!-- 500 -->
-            <rect style="fill:orange" width="60" height="20" x="0" y="500"/>
-            <rect style="fill:orange" width="20" height="20" x="260" y="500"/>
+                            <!-- 500 -->
+                            <rect
+                                style="fill: orange"
+                                width="60"
+                                height="20"
+                                x="0"
+                                y="500"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="260"
+                                y="500"
+                            />
 
-            <!-- 520 -->
-            <rect style="fill:orange" width="80" height="20" x="0" y="520"/>
-            <rect style="fill:orange" width="20" height="20" x="140" y="520"/>
-            <rect style="fill:orange" width="80" height="20" x="240" y="520"/>
-            <rect style="fill:orange" width="20" height="20" x="500" y="520"/>
+                            <!-- 520 -->
+                            <rect
+                                style="fill: orange"
+                                width="80"
+                                height="20"
+                                x="0"
+                                y="520"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="140"
+                                y="520"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="80"
+                                height="20"
+                                x="240"
+                                y="520"
+                            />
+                            <rect
+                                style="fill: orange"
+                                width="20"
+                                height="20"
+                                x="500"
+                                y="520"
+                            />
 
-            <!-- the floor -->
-            <rect style="fill:orange" width="600" height="20" x="0" y="540"/>
-		  
-        </g>
+                            <!-- the floor -->
+                            <rect
+                                style="fill: orange"
+                                width="600"
+                                height="20"
+                                x="0"
+                                y="540"
+                            />
+                        </g>
 
-        <g id="player">
-          <circle cx="20" cy="20" r="20" style="fill:url(#player_color);stroke:black;stroke-width:2"/>
-          <ellipse cx="15" cy="15" rx="3" ry="6" style="fill:black"/>
-          <ellipse cx="25" cy="15" rx="3" ry="6" style="fill:black"/>
-          <path d="M10,25 l20,0 q0,8 -10,8 t-10,-8" style="fill:orange;stroke:black;stroke-black:2"/>
-        </g>
-        
-        <g id="monsters"/>
- 
-      </g>
-    </g>
-  </g>
-</svg>
-</body>
+                        <text x="25" y="-5" text-anchor="middle" id="name">
+                            Anonymous
+                        </text>
+                        <g id="player">
+                            <svg
+                                id="Layer_1"
+                                enable-background="new 0 0 512 512"
+                                height="40"
+                                viewBox="0 0 512 512"
+                                width="40"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <g>
+                                    <g>
+                                        <path
+                                            d="m206.821 200v139.847c0 2.294 1.859 4.153 4.153 4.153 2.091 0 3.806-1.562 4.119-3.63 1.75-11.532 11.706-20.37 23.727-20.37s21.978 8.838 23.727 20.37c.314 2.068 2.028 3.63 4.119 3.63h8.306c2.091 0 3.806-1.562 4.119-3.63 1.75-11.532 11.706-20.37 23.727-20.37s21.978 8.838 23.727 20.37c.314 2.068 2.028 3.63 4.119 3.63h8.306c2.091 0 3.806-1.562 4.119-3.63 1.75-11.532 11.706-20.37 23.727-20.37s21.978 8.838 23.727 20.37c.314 2.068 2.028 3.63 4.119 3.63h8.306c2.091 0 3.806-1.562 4.119-3.63 1.75-11.532 11.706-20.37 23.727-20.37s21.978 8.838 23.727 20.37c.314 2.068 2.028 3.63 4.119 3.63 2.294 0 4.153-1.859 4.153-4.153v-139.847z"
+                                            fill="#646464"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m150.821 232h120v-64h-120c-4.418 0-8 3.582-8 8v48c0 4.418 3.582 8 8 8z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m398.821 312h-128v18.746l-38.627 38.627c-6.002 6.001-9.373 14.141-9.373 22.627v64c-17.673 0-32 14.327-32 32 0 8.836 7.164 16 16 16h64c8.836 0 16-7.164 16-16v-82.745l54.627-54.627c2.026-2.026 3.719-4.259 5.088-6.627h52.285z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m462.821 456c0-8.189-3.124-16.379-9.373-22.627l-54.627-54.627v-66.746c0-17.673-14.327-32-32-32s-32 14.327-32 32v80c0 8.487 3.371 16.626 9.373 22.627l41.373 41.373h-2.746c-17.673 0-32 14.327-32 32 0 8.836 7.164 16 16 16h80c8.836 0 16-7.164 16-16z"
+                                            fill="#464646"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m382.821 328h-96c-8.837 0-16-7.163-16-16v-112c0-17.673 14.327-32 32-32h96v144c0 8.837-7.163 16-16 16z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m398.821 168h-16c-17.673 0-32 14.327-32 32 0 4.418-3.582 8-8 8h-72c-4.418 0-8-3.582-8-8 0-22.091 17.909-40 40-40h96z"
+                                            fill="#646464"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m454.821 120h-48c-4.418 0-8 3.582-8 8v40c-17.673 0-32 14.327-32 32s14.327 32 32 32h32c17.673 0 32-14.327 32-32v-72c0-4.418-3.582-8-8-8z"
+                                            fill="#464646"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m262.821 184h56c8.837 0 16-7.163 16-16v-64h-88v64c0 8.837 7.163 16 16 16z"
+                                            fill="#f0915a"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m294.821 184h-32c-8.837 0-16-7.163-16-16v-64h64v64c0 8.837-7.163 16-16 16z"
+                                            fill="#fab991"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m414.821 104h32v16h-32z"
+                                            fill="#d7e6f0"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m118.821 192h32v16h-32z"
+                                            fill="#d7e6f0"
+                                            transform="matrix(0 -1 1 0 -65.179 334.821)"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m294.715 104 .084 24c.012 4.422 3.599 8 8.021 8v16c0 8.837 7.163 16 16 16h16c8.837 0 16-7.163 16-16v-48z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m310.821 152c-4.418 0-8-3.582-8-8v-16c0-4.418 3.582-8 8-8 8.837 0 16 7.163 16 16 0 8.837-7.163 16-16 16z"
+                                            fill="#f0915a"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m390.821 96h-176c-4.418 0-8 3.582-8 8h192c0-4.418-3.582-8-8-8z"
+                                            fill="#464646"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m334.821 48h-72l-16 48h104z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <circle
+                                            cx="318.821"
+                                            cy="256"
+                                            fill="#646464"
+                                            r="8"
+                                        />
+                                    </g>
+                                    <g>
+                                        <circle
+                                            cx="318.821"
+                                            cy="296"
+                                            fill="#646464"
+                                            r="8"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m446.821 48h-48v32c0 4.418 3.582 8 8 8h40z"
+                                            fill="#f0915a"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m414.821 88h32v16h-32z"
+                                            fill="#f0915a"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m450.821 72h-216c-6.627 0-12-5.373-12-12 0-6.627 5.373-12 12-12h216c6.627 0 12 5.373 12 12 0 6.627-5.373 12-12 12z"
+                                            fill="#aa5a28"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m398.821 80v-20c0-2.209 1.791-4 4-4 6.627 0 12 5.373 12 12v4c8.837 0 16 7.164 16 16h-24c-4.418 0-8-3.582-8-8z"
+                                            fill="#fab991"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m438.821 40h-32c-4.418 0-8 3.582-8 8 0 4.418 3.582 8 8 8h32c4.418 0 8-3.582 8-8 0-4.418-3.582-8-8-8z"
+                                            fill="#fab991"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m301.132 15.155c-9.411-4.705-19.789-7.155-30.311-7.155s-20.9 2.45-30.311 7.155l-17.689 8.845 10.343 10.343c3.622 3.622 5.657 8.535 5.657 13.657v24c8.836 0 16 7.164 16 16h32c0-8.836 7.164-16 16-16v-24c0-5.122 2.035-10.035 5.657-13.657l10.343-10.343z"
+                                            fill="#8caac8"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m240.51 28.489c9.411-4.706 19.789-7.156 30.311-7.156s20.9 2.45 30.311 7.156l8.8 4.4 8.889-8.889-17.689-8.845c-9.411-4.705-19.789-7.155-30.311-7.155s-20.9 2.45-30.311 7.155l-17.689 8.845 8.889 8.889z"
+                                            fill="#d7e6f0"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m274.821 168h-16c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4h16c2.209 0 4 1.791 4 4 0 2.209-1.791 4-4 4z"
+                                            fill="#d7e6f0"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m110.821 164v52h16v-60c0-2.209-1.791-4-4-4-6.627 0-12 5.373-12 12z"
+                                            fill="#f0915a"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m94.821 176c0-4.418-3.582-8-8-8h-13.333v8c0 7.364 5.97 13.333 13.333 13.333h8v26.667h16v-40z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <circle
+                                            cx="86.821"
+                                            cy="176"
+                                            fill="#f0915a"
+                                            r="8"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m46.821 152v12c0 2.209 1.791 4 4 4h36c4.418 0 8 3.582 8 8h16v-8c0-8.837-7.163-16-16-16z"
+                                            fill="#464646"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m50.821 144c-2.209 0-4 1.791-4 4v4h8v-4c0-2.209-1.791-4-4-4z"
+                                            fill="#323232"
+                                        />
+                                    </g>
+                                    <g>
+                                        <path
+                                            d="m94.821 181.333h16c4.418 0 8 3.582 8 8v18.667c0 4.418-3.582 8-8 8h-16c-4.418 0-8-3.582-8-8v-18.667c0-4.418 3.582-8 8-8z"
+                                            fill="#fab991"
+                                        />
+                                    </g>
+                                </g>
+                            </svg>
 
+                            <!-- <circle
+                                cx="20"
+                                cy="20"
+                                r="20"
+                                style="
+                                    fill: url(#player_color);
+                                    stroke: black;
+                                    stroke-width: 2;
+                                "
+                            />
+                            <ellipse
+                                cx="15"
+                                cy="15"
+                                rx="3"
+                                ry="6"
+                                style="fill: black"
+                            />
+                            <ellipse
+                                cx="25"
+                                cy="15"
+                                rx="3"
+                                ry="6"
+                                style="fill: black"
+                            />
+                            <path
+                                d="M10,25 l20,0 q0,8 -10,8 t-10,-8"
+                                style="
+                                    fill: orange;
+                                    stroke: black;
+                                    stroke-black: 2;
+                                "
+                            /> -->
+                        </g>
+
+                        <g id="monsters" />
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </body>
 </html>
