@@ -266,7 +266,7 @@ function keyup(evt) {
 //
 function gamePlay() {
     //The collisionDetection() function is called at the start of the gamePlay() function
-    // collisionDetection();
+    collisionDetection();
     // Check whether the player is on a platform
     var isOnPlatform = player.isOnPlatform();
 
@@ -329,7 +329,7 @@ function createMonsters() {
     }
 }
 
-function coin_collidePlatform(position) {
+function coinCollidePlatform(position) {
     var collide = false;
     var platforms = document.getElementById("platforms");
     for (var i = 0; i < platforms.childNodes.length; i++) {
@@ -362,7 +362,7 @@ function createCoins() {
     for (var i = 0; i < num_goods; ) {
         var x = Math.max(Math.floor(Math.random() * SCREEN_SIZE.w), 60);
         var y = Math.floor(Math.random() * SCREEN_SIZE.h);
-        if (!coin_collidePlatform(new Point(x, y))) {
+        if (!coinCollidePlatform(new Point(x, y))) {
             createCoin(x, y);
             i++;
         }
@@ -452,7 +452,7 @@ function collisionDetection() {
     // Check if the player has found rings?
     var coins = document.getElementById("coins");
     // var player = document.getElementById("player");
-    for (var i = 0; i < num_goods; i++) {
+    for (var i = 0; i < coins.childNodes.length; i++) {
         var coin = coins.childNodes.item(i);
         var cx = parseInt(coin.getAttribute("x"));
         var cy = parseInt(coin.getAttribute("y"));
@@ -466,34 +466,37 @@ function collisionDetection() {
             )
         ) {
             // if yes, increase number of rings and score
-            num_collected++;
-            score = num_collected;
             coins.removeChild(coin);
             i--;
+            num_collected++;
+            score += 5;
             document.getElementById("scorer").innerHTML = score;
         }
     }
+    levelUp();
 
-    // Check whether the player collides with a monster
-    var monsters = document.getElementById("monsters");
-    // var player = document.getElementById("player");
-    for (var i = 0; i < monsters.childNodes.length; i++) {
-        var monster = monsters.childNodes.item(i);
-        var a = parseInt(monster.getAttribute("x"));
-        var b = parseInt(monster.getAttribute("y"));
-        // For each monster check if it overlaps with the player
-        if (
-            intersect(
-                new Point(a, b),
-                MONSTER_SIZE,
-                player.position,
-                PLAYER_SIZE
-            )
-        ) {
-            // if yes, stop the game
-            alert("Game over!");
-            clearInterval(gameInterval);
-            // gameOver();
+    if (!isCheat) {
+        // Check whether the player collides with a monster
+        var monsters = document.getElementById("monsters");
+        // var player = document.getElementById("player");
+        for (var i = 0; i < monsters.childNodes.length; i++) {
+            var monster = monsters.childNodes.item(i);
+            var a = parseInt(monster.getAttribute("x"));
+            var b = parseInt(monster.getAttribute("y"));
+            // For each monster check if it overlaps with the player
+            if (
+                intersect(
+                    new Point(a, b),
+                    MONSTER_SIZE,
+                    player.position,
+                    PLAYER_SIZE
+                )
+            ) {
+                // if yes, stop the game
+                alert("Game over!");
+                clearInterval(gameInterval);
+                // gameOver();
+            }
         }
     }
 
@@ -522,6 +525,7 @@ function collisionDetection() {
                 i--;
                 monsters.removeChild(monster);
                 j--;
+                score += 10;
             }
         }
     }
@@ -531,6 +535,8 @@ function shoot() {
     if (bullets > 0) {
         //Decrease number of bullets
         bullets -= 1;
+
+        //no matter cheat or not cheat shoot bullet
         direction = player.direction;
         // Disable shooting for a short period of time
         canShoot = false;
@@ -620,14 +626,25 @@ function createExit() {
 
 function reachExit() {
     //check if player reaches exit like collision detection
+    var exit = document.getElementById("exits");
+    var x = parseInt(exit.getAttribute("x"));
+    var y = parseInt(exit.getAttribute("y"));
+    if (intersect(player.position, PLAYER_SIZE, new Point(x, y), EXIT_SIZE)) {
+        // alert("reach exit");
+        return true;
+    }
+    return false;
 }
 
 function levelUp() {
-    if (num_collected == num_goods && reachExit()) {
-        level++;
-        bullets = 8;
-        //playsnd("level complete");
-        //Make more monsters=
+    if (reachExit()) {
+        if (num_collected == num_goods) {
+            score = score + level * 100;
+            level++;
+            bullets = 8;
+            //playsnd("level complete");
+            //Make more monsters=
+        }
     }
 }
 function cheat() {
