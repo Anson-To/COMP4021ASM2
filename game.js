@@ -156,7 +156,7 @@ var VERTICAL_DISPLACEMENT = 1; // The displacement of vertical speed
 
 var GAME_INTERVAL = 25; // The time interval of running the game
 var MONSTER_SIZE = new Size(40, 40); // The size of a monster
-var COIN_SIZE = new Size(40, 40);
+var COIN_SIZE = new Size(20, 20);
 var EXIT_SIZE = new Size(40, 40);
 var num_goods = 8;
 var timeLeft = 100; //game time is 100s
@@ -182,30 +182,6 @@ var canShoot = true; // A flag indicating whether the player can shoot a bullet
 var num_collected = 0;
 var timer;
 
-function coin_collidePlatform(position) {
-    var platforms = document.getElementById("platforms");
-    for (var i = 0; i < platforms.childNodes.length; i++) {
-        var node = platforms.childNodes.item(i);
-        if (node.nodeName != "rect") continue;
-
-        var x = parseFloat(node.getAttribute("x"));
-        var y = parseFloat(node.getAttribute("y"));
-        var w = parseFloat(node.getAttribute("width"));
-        var h = parseFloat(node.getAttribute("height"));
-        var pos = new Point(x, y);
-        var size = new Size(w, h);
-
-        if (intersect(position, COIN_SIZE, pos, size)) {
-            position.x = this.position.x;
-            if (intersect(position, PLAYER_SIZE, pos, size)) {
-                if (this.position.y >= y + h) position.y = y + h;
-                else position.y = y - PLAYER_SIZE.h;
-                this.verticalSpeed = 0;
-            }
-        }
-    }
-}
-
 // Should be executed after the page is loaded
 function load() {
     // Attach keyboard events
@@ -217,7 +193,7 @@ function load() {
 
     // Create the monsters as well
     // createMonsters(); // var monster = new createMonster(200, 15);
-    // createRings();
+    createCoins();
     createExit();
 
     timer = setInterval("timerCal()", 1000);
@@ -353,22 +329,43 @@ function createMonsters() {
     }
 }
 
-function createRing(x, y) {
-    var ring = document.createElementNS("http://www.w3.org/2000/svg", "use");
-    document.getElementById("rings").appendChild(ring);
-    ring.setAttribute("x", x);
-    ring.setAttribute("y", y);
-    ring.setAttributeNS(
-        "http://www.w3.org/1999/xlink",
-        "xlink:href",
-        "#monster"
-    );
+function coin_collidePlatform(position) {
+    var collide = false;
+    var platforms = document.getElementById("platforms");
+    for (var i = 0; i < platforms.childNodes.length; i++) {
+        var node = platforms.childNodes.item(i);
+        if (node.nodeName != "rect") continue;
+
+        var x = parseFloat(node.getAttribute("x"));
+        var y = parseFloat(node.getAttribute("y"));
+        var w = parseFloat(node.getAttribute("width"));
+        var h = parseFloat(node.getAttribute("height"));
+        var pos = new Point(x, y);
+        var size = new Size(w, h);
+
+        if (intersect(position, COIN_SIZE, pos, size)) {
+            collide = true;
+        }
+    }
+    return collide;
 }
-function createRings() {
-    for (var i = 0; i < num_goods; i++) {
-        var x = Math.max(Math.floor(Math.random() * SCREEN_SIZE.w), 200);
+
+function createCoin(x, y) {
+    var coin = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    document.getElementById("coins").appendChild(coin);
+    coin.setAttribute("x", x);
+    coin.setAttribute("y", y);
+    coin.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#coinn");
+}
+//create mulitple coins
+function createCoins() {
+    for (var i = 0; i < num_goods; ) {
+        var x = Math.max(Math.floor(Math.random() * SCREEN_SIZE.w), 60);
         var y = Math.floor(Math.random() * SCREEN_SIZE.h);
-        createRing(x, y);
+        if (!coin_collidePlatform(new Point(x, y))) {
+            createCoin(x, y);
+            i++;
+        }
     }
 }
 
@@ -452,20 +449,28 @@ function gameOver() {
 }
 //lab 5
 function collisionDetection() {
-    // Check if the player has found all 8 rings
-    var rings = document.getElementsById("ring");
-    var player = document.getElementById("player");
-    for (vari = 0; i < num_goods; i++) {
-        var ring = rings.childNodes.item(i);
-        var x = parseInt(ring.getAttribute("x"));
-        var y = parseInt(ring.getAttribute("y"));
-        // For each monster check if it overlaps with the player
+    // Check if the player has found rings?
+    var coins = document.getElementById("coins");
+    // var player = document.getElementById("player");
+    for (var i = 0; i < num_goods; i++) {
+        var coin = coins.childNodes.item(i);
+        var cx = parseInt(coin.getAttribute("x"));
+        var cy = parseInt(coin.getAttribute("y"));
+        // For each ring check if it overlaps with the player
         if (
-            intersect(new Point(x, y), ring_size, player.position, PLAYER_SIZE)
+            intersect(
+                new Point(cx, cy),
+                COIN_SIZE,
+                player.position,
+                PLAYER_SIZE
+            )
         ) {
             // if yes, increase number of rings and score
             num_collected++;
-            score = num_collected * 10;
+            score = num_collected;
+            coins.removeChild(coin);
+            i--;
+            document.getElementById("scorer").innerHTML = score;
         }
     }
 
@@ -474,12 +479,12 @@ function collisionDetection() {
     // var player = document.getElementById("player");
     for (var i = 0; i < monsters.childNodes.length; i++) {
         var monster = monsters.childNodes.item(i);
-        var x = parseInt(monster.getAttribute("x"));
-        var y = parseInt(monster.getAttribute("y"));
+        var a = parseInt(monster.getAttribute("x"));
+        var b = parseInt(monster.getAttribute("y"));
         // For each monster check if it overlaps with the player
         if (
             intersect(
-                new Point(x, y),
+                new Point(a, b),
                 MONSTER_SIZE,
                 player.position,
                 PLAYER_SIZE
@@ -488,7 +493,7 @@ function collisionDetection() {
             // if yes, stop the game
             alert("Game over!");
             clearInterval(gameInterval);
-            gameOver();
+            // gameOver();
         }
     }
 
@@ -500,19 +505,19 @@ function collisionDetection() {
         var y = parseInt(bullet.getAttribute("y"));
         for (var j = 0; j < monsters.childNodes.length; j++) {
             var monster = monsters.childNodes.item(j);
-            var x2 = parseInt(monster.getAttribute("x"));
-            var y2 = parseInt(monster.getAttribute("y"));
+            var mx = parseInt(monster.getAttribute("x"));
+            var my = parseInt(monster.getAttribute("y"));
 
             if (
                 intersect(
-                    new Point(x2, y2),
+                    new Point(mx, my),
                     MONSTER_SIZE,
                     new Point(x, y),
                     BULLET_SIZE
                 )
             ) {
                 // if yes, remove both the monster and the bullet
-                playsnd("mosterdead");
+                // playsnd("mosterdead");
                 bullets.removeChild(bullet);
                 i--;
                 monsters.removeChild(monster);
@@ -618,9 +623,10 @@ function reachExit() {
 }
 
 function levelUp() {
-    if (num_collected == 8 && reachExit()) {
+    if (num_collected == num_goods && reachExit()) {
         level++;
         bullets = 8;
+        //playsnd("level complete");
         //Make more monsters=
     }
 }
