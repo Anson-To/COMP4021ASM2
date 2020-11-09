@@ -89,6 +89,75 @@
                 </g>
             </defs>
 
+            <defs>
+                <g id="bullett">
+                    <circle cx="5" cy="5" r="5" style="fill: red" />
+                    <circle cx="6" cy="3" r="1" style="fill: pink" />
+                </g>
+            </defs>
+
+            <defs>
+                <g id="exitt">
+                    <svg
+                        id="Capa_1"
+                        enable-background="new 0 0 512 512"
+                        height="40"
+                        viewBox="0 0 512 512"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g>
+                            <path
+                                d="m512 462.681h-512v-302.867h512z"
+                                fill="#45a04b"
+                            />
+                            <path
+                                d="m256 159.814h256v302.867h-256z"
+                                fill="green"
+                            />
+                            <path
+                                d="m110 49.319h30v111.88h-30z"
+                                fill="#455da0"
+                            />
+                            <path
+                                d="m372 49.319h30v111.88h-30z"
+                                fill="#1f4270"
+                            />
+                            <path
+                                d="m162.404 348.757v26.854h-80.906v-116.331h79.432v26.854h-49.482v17.384h42.272v25.888h-42.272v19.351z"
+                                fill="#edf5ff"
+                            />
+                            <path
+                                d="m203.086 259.28 21.136 36.702 21.137-36.702h34.407l-38.831 58.985 37.521 57.346h-34.407l-19.826-35.063-19.825 35.063h-34.571l37.521-57.346-38.832-58.985z"
+                                fill="#edf5ff"
+                            />
+                            <g fill="#d5e8fe">
+                                <path d="m279.766 259.28h-23.766v36.101z" />
+                                <path d="m256 341.29v34.321h22.456z" />
+                                <path
+                                    d="m287.958 375.611v-116.331h31.949v116.331z"
+                                />
+                                <path
+                                    d="m430.502 287.134h-34.007v88.477h-30.949v-88.477h-34.006v-27.854h98.963v27.854z"
+                                />
+                            </g>
+                            <circle
+                                cx="125"
+                                cy="161.198"
+                                fill="#ffda2d"
+                                r="32.88"
+                            />
+                            <circle
+                                cx="387"
+                                cy="161.198"
+                                fill="#fdbf00"
+                                r="32.88"
+                            />
+                        </g>
+                    </svg>
+                </g>
+            </defs>
+
             <rect
                 width="100%"
                 height="100%"
@@ -108,7 +177,37 @@
             />
 
             <!-- Timer position -->
-            <text x="700" y="30">Time:</text>
+            <g transform="translate(640, 50)">
+                <text
+                    x="70"
+                    y="0"
+                    style="
+                        fill: black;
+                        font-size: 25px;
+                        font-weight: bold;
+                        text-anchor: middle;
+                    "
+                >
+                    Time:
+                </text>
+                <rect
+                    x="0"
+                    y="10"
+                    width="140"
+                    height="35"
+                    style="fill: white"
+                />
+                <text
+                    id="timer"
+                    x="70"
+                    y="36"
+                    style="fill: black; font-size: 25px; text-anchor: middle"
+                >
+                    100
+                </text>
+            </g>
+
+            <!-- <text x="700" y="30">Time:</text>
             <rect
                 x="680"
                 y="40"
@@ -116,6 +215,118 @@
                 height="50"
                 style="fill: white; stroke: purple; stroke-width: 5"
             />
+            <text x="685" y="70" id="timer">Time left</text> -->
+
+            <!-- Bullets postion -->
+            <g transform="translate(640, 200)">
+                <text
+                    x="70"
+                    y="0"
+                    style="
+                        fill: black;
+                        font-size: 25px;
+                        font-weight: bold;
+                        text-anchor: middle;
+                    "
+                >
+                    Bullets:
+                </text>
+                <rect
+                    x="0"
+                    y="10"
+                    width="140"
+                    height="35"
+                    style="fill: white"
+                />
+                <text
+                    id="bullet"
+                    x="70"
+                    y="36"
+                    style="fill: black; font-size: 25px; text-anchor: middle"
+                >
+                    7
+                </text>
+            </g>
+            <!-- <text x="700" y="110">Bullets:</text>
+            <rect
+                x="680"
+                y="130"
+                width="80"
+                height="50"
+                style="fill: white; stroke: purple; stroke-width: 5"
+            />
+            <text x="695" y="155" id="bullet">8</text> -->
+
+            <!-- Score postion -->
+            <g transform="translate(640, 120)">
+                <text
+                    x="70"
+                    y="0"
+                    style="
+                        fill: black;
+                        font-size: 25px;
+                        font-weight: bold;
+                        text-anchor: middle;
+                    "
+                >
+                    Score:
+                </text>
+                <rect
+                    x="0"
+                    y="10"
+                    width="140"
+                    height="35"
+                    style="fill: white"
+                />
+                <text
+                    id="scorer"
+                    x="70"
+                    y="36"
+                    style="fill: black; font-size: 25px; text-anchor: middle"
+                >
+                    0
+                </text>
+            </g>
+
+            <!-- Level postion -->
+            <g transform="translate(640, 300)">
+                <text
+                    x="70"
+                    y="0"
+                    style="
+                        fill: black;
+                        font-size: 25px;
+                        font-weight: bold;
+                        text-anchor: middle;
+                    "
+                >
+                    Level:
+                </text>
+                <rect
+                    x="0"
+                    y="10"
+                    width="140"
+                    height="35"
+                    style="fill: white"
+                />
+                <text
+                    id="level"
+                    x="70"
+                    y="36"
+                    style="fill: black; font-size: 25px; text-anchor: middle"
+                >
+                    10
+                </text>
+            </g>
+            <!-- <text x="700" y="300">Level:</text>
+            <rect
+                x="680"
+                y="330"
+                width="80"
+                height="50"
+                style="fill: white; stroke: purple; stroke-width: 5"
+            />
+            <text x="690" y="350" id="level">10</text> -->
 
             <!-- Add your button here -->
 
@@ -825,6 +1036,8 @@
                         </g>
 
                         <g id="monsters" />
+                        <g id="bullets" />
+                        <g id="exits" />
                     </g>
                 </g>
             </g>
