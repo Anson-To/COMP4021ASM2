@@ -19,6 +19,7 @@ function intersect(pos1, size1, pos2, size2) {
     );
 }
 
+var name = prompt("please enter your name") || "Anonymous"; //Name attribute
 // The player class used in this program
 function Player() {
     this.node = document.getElementById("player");
@@ -26,8 +27,8 @@ function Player() {
     this.motion = motionType.NONE;
     this.verticalSpeed = 0;
     this.alive = true; //life set as player
-    var name = prompt("please enter your name") || "Anonymous"; //Name attribute
-    document.getElementById("name").innerHTML = name;
+    this.name = name; //Name attribute
+    document.getElementById("name").innerHTML = this.name;
     this.flip = true; //flip the player
     this.direction; //for bullet
 }
@@ -83,13 +84,11 @@ Player.prototype.isOnDisappearPlatform = function () {
 
 //verticalPlatform
 Player.prototype.isOnVerticalPlatform = function () {
-    var node = document.getElementById("moving_platform");
+    var node = document.getElementById("verticalPlatform");
     var x = parseFloat(node.getAttribute("x"));
     var y = parseFloat(node.getAttribute("y"));
     var w = parseFloat(node.getAttribute("width"));
     var h = parseFloat(node.getAttribute("height"));
-    // console.log(`Player x:${this.position.x} y:${this.position.y}`);
-    // console.log(`Platform x:${x} y:${y - PLAYER_SIZE.h}`);
     if (
         this.position.x + PLAYER_SIZE.w > x &&
         this.position.x < x + w &&
@@ -155,11 +154,12 @@ var JUMP_SPEED = 15; // The speed of the player jumping
 var VERTICAL_DISPLACEMENT = 1; // The displacement of vertical speed
 
 var GAME_INTERVAL = 25; // The time interval of running the game
-var MONSTER_SIZE = new Size(40, 40); // The size of a monster
+var MONSTER_SIZE = new Size(23, 23); // The size of a monster
 var COIN_SIZE = new Size(20, 20);
 var EXIT_SIZE = new Size(40, 40);
 var num_goods = 8;
 var timeLeft = 100; //game time is 100s
+var PORTAL_SIZE = new Size(40, 40);
 
 //
 // Variables in the game
@@ -181,6 +181,8 @@ var direction;
 var canShoot = true; // A flag indicating whether the player can shoot a bullet
 var num_collected = 0;
 var timer;
+var verticalPlatformSpeed = 1; //speed of vertical platform
+var verticaldirection = "up";
 
 // Should be executed after the page is loaded
 function load() {
@@ -192,10 +194,15 @@ function load() {
     player = new Player();
 
     // Create the monsters as well
-    // createMonsters(); // var monster = new createMonster(200, 15);
+    createMonsters(); // var monster = new createMonster(200, 15);
     createCoins();
     createExit();
+    createPortals();
 
+    //restart timer
+    clearInterval(gameInterval);
+    clearInterval(timer);
+    timeLeft = 100;
     timer = setInterval("timerCal()", 1000);
 
     // Start the game interval
@@ -232,11 +239,15 @@ function keydown(evt) {
             }
             break;
         case "C".charCodeAt(0):
-            isCheat = true;
-            cheat();
+            if (isCheat == false) {
+                isCheat = true;
+            }
+            // cheat();
             break;
         case "V".charCodeAt(0):
-            isCheat = false;
+            if (isCheat) {
+                isCheat = false;
+            }
             break;
     }
 }
@@ -304,8 +315,9 @@ function gamePlay() {
 
     //New bullet position
     moveBullets(); //weird ?!
-    updateScreen();
+    moveVerticalPlatform();
     //Disappear platform
+    updateScreen();
 }
 function createMonster(x, y) {
     var monster = document.createElementNS("http://www.w3.org/2000/svg", "use");
@@ -327,6 +339,7 @@ function createMonsters() {
         var y = Math.floor(Math.random() * SCREEN_SIZE.h);
         createMonster(x, y);
     }
+    //create special monsters
 }
 
 function coinCollidePlatform(position) {
@@ -410,7 +423,7 @@ function timerCal() {
     //update Timer on screen
     document.getElementById("timer").innerHTML = timeLeft;
 
-    if (timeLeft == 0) {
+    if (timeLeft <= 0) {
         alert("end");
         gameOver();
         //endGame = true ;
@@ -443,10 +456,32 @@ function playsnd(id) {
 
 function gameOver() {
     //play gameover audio
+    BGM.pause();
     // playsnd("gameOver");
+    clearInterval(gameInterval);
     clearInterval(timer);
+
+    table = getHighScoreTable();
+
+    name = player.name;
+    var record = new ScoreRecord(player.name, score);
+
+    var pos = table.length;
+    for (var i = 0; i < table.length; i++) {
+        if (record.score > table[i].score) {
+            pos = i;
+            break;
+        }
+    }
+    table.splice(pos, 0, record);
+
+    setHighScoreTable(table);
+    showHighScoreTable(table, pos);
+    document.getElementById("timer").innerHTML = 0;
     player.alive = false;
+    //show the score table
 }
+
 //lab 5
 function collisionDetection() {
     // Check if the player has found rings?
@@ -473,11 +508,9 @@ function collisionDetection() {
             document.getElementById("scorer").innerHTML = score;
         }
     }
-    levelUp();
-
+    var monsters = document.getElementById("monsters");
     if (!isCheat) {
-        // Check whether the player collides with a monster
-        var monsters = document.getElementById("monsters");
+        // if not cheating then // Check whether the player collides with a monster
         // var player = document.getElementById("player");
         for (var i = 0; i < monsters.childNodes.length; i++) {
             var monster = monsters.childNodes.item(i);
@@ -493,89 +526,102 @@ function collisionDetection() {
                 )
             ) {
                 // if yes, stop the game
-                alert("Game over!");
-                clearInterval(gameInterval);
-                // gameOver();
+                // alert("Game over!");
+                // clearInterval(gameInterval);
+                // clearInterval(timer);
+                gameOver();
+                return;
             }
         }
+        //Check if bullets hit player
     }
 
     // Check whether a bullet hits a monster
     var bullets = document.getElementById("bullets");
     for (var i = 0; i < bullets.childNodes.length; i++) {
         var bullet = bullets.childNodes.item(i);
-        var x = parseInt(bullet.getAttribute("x"));
-        var y = parseInt(bullet.getAttribute("y"));
+        var x = parseFloat(bullet.getAttribute("x"));
+        var y = parseFloat(bullet.getAttribute("y"));
+
         for (var j = 0; j < monsters.childNodes.length; j++) {
             var monster = monsters.childNodes.item(j);
-            var mx = parseInt(monster.getAttribute("x"));
-            var my = parseInt(monster.getAttribute("y"));
+            var mx = parseFloat(monster.getAttribute("x"));
+            var my = parseFloat(monster.getAttribute("y"));
 
             if (
                 intersect(
-                    new Point(mx, my),
-                    MONSTER_SIZE,
                     new Point(x, y),
-                    BULLET_SIZE
+                    BULLET_SIZE,
+                    new Point(mx, my),
+                    MONSTER_SIZE
                 )
             ) {
-                // if yes, remove both the monster and the bullet
-                // playsnd("mosterdead");
-                bullets.removeChild(bullet);
-                i--;
                 monsters.removeChild(monster);
                 j--;
+                bullets.removeChild(bullet);
+                i--;
                 score += 10;
             }
         }
     }
+    reachExit();
+    reachPortal();
 }
-
 function shoot() {
-    if (bullets > 0) {
+    if (!isCheat) {
         //Decrease number of bullets
+        if (bullets <= 0) {
+            return;
+        }
         bullets -= 1;
-
-        //no matter cheat or not cheat shoot bullet
-        direction = player.direction;
-        // Disable shooting for a short period of time
-        canShoot = false;
-        setTimeout("canShoot = true", SHOOT_INTERVAL);
-        // Calculate and set the position of the bullet
-        // The initial position of the bullet is the center of the player
-        // Create the bullet by createing a use node
-        // Set the href of the use node to the bullet defined in the defs node
-        var bullet = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "use"
-        );
-        document.getElementById("bullets").appendChild(bullet);
-        bullet.setAttribute(
-            "x",
-            player.position.x + PLAYER_SIZE.w / 2 - BULLET_SIZE.w / 2
-        );
-        bullet.setAttribute(
-            "y",
-            player.position.y + PLAYER_SIZE.h / 2 - BULLET_SIZE.h / 2
-        );
-        bullet.setAttributeNS(
-            "http://www.w3.org/1999/xlink",
-            "xlink:href",
-            "#bullett"
-        );
-        // Append the bullet to the bullet groupa
-        document.getElementById("bullets").appendChild(bullet);
     }
+    //no matter cheat or not cheat shoot bullet
+    // Disable shooting for a short period of time
+    canShoot = false;
+    setTimeout("canShoot = true", SHOOT_INTERVAL);
+    // Calculate and set the position of the bullet
+    // The initial position of the bullet is the center of the player
+    // Create the bullet by createing a use node
+    // Set the href of the use node to the bullet defined in the defs node
+    var bullet = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    document.getElementById("bullets").appendChild(bullet);
+    // if (player.direction == "rhs") {
+    //     bullet.setAttribute(
+    //         "x",
+    //         player.position.x + PLAYER_SIZE.w / 2 - BULLET_SIZE.w / 2
+    //     );
+    // } else {
+    //     bullet.setAttribute(
+    //         "x",
+    //         player.position.x - PLAYER_SIZE.w / 2 + BULLET_SIZE.w / 2
+    //     );
+    // }
+    bullet.setAttribute(
+        "x",
+        player.position.x + PLAYER_SIZE.w / 2 - BULLET_SIZE.w / 2
+    );
+    bullet.setAttribute(
+        "y",
+        player.position.y + PLAYER_SIZE.h / 2 - BULLET_SIZE.h / 2
+    );
+    bullet.setAttributeNS(
+        "http://www.w3.org/1999/xlink",
+        "xlink:href",
+        "#bullett"
+    );
+    bullet.setAttribute("direction", player.direction);
+    // Append the bullet to the bullet groupa
+    document.getElementById("bullets").appendChild(bullet);
 }
 function moveBullets() {
     // Go through all bullets
     var bullets = document.getElementById("bullets");
     for (var i = 0; i < bullets.childNodes.length; i++) {
         var node = bullets.childNodes.item(i);
-
+        var dir = node.getAttribute("direction");
         // Update the position of the bullet
-        var x = parseInt(node.getAttribute("x"));
-        if (direction == "rhs") {
+        var x = parseFloat(node.getAttribute("x"));
+        if (dir == "rhs") {
             x += BULLET_SPEED;
         } else {
             x -= BULLET_SPEED;
@@ -620,35 +666,137 @@ function createExit() {
     var exit = document.createElementNS("http://www.w3.org/2000/svg", "use");
     document.getElementById("exits").appendChild(exit);
     exit.setAttribute("x", 560);
-    exit.setAttribute("y", 504);
+    exit.setAttribute("y", 500);
     exit.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#exitt");
 }
 
 function reachExit() {
     //check if player reaches exit like collision detection
-    var exit = document.getElementById("exits");
-    var x = parseInt(exit.getAttribute("x"));
-    var y = parseInt(exit.getAttribute("y"));
-    if (intersect(player.position, PLAYER_SIZE, new Point(x, y), EXIT_SIZE)) {
-        // alert("reach exit");
-        return true;
-    }
-    return false;
-}
-
-function levelUp() {
-    if (reachExit()) {
-        if (num_collected == num_goods) {
-            score = score + level * 100;
-            level++;
-            bullets = 8;
-            //playsnd("level complete");
-            //Make more monsters=
+    var exits = document.getElementById("exits");
+    for (var i = 0; i < exits.childNodes.length; i++) {
+        var exit = exits.childNodes.item(i);
+        var x = parseInt(exit.getAttribute("x"));
+        var y = parseInt(exit.getAttribute("y"));
+        console.log(
+            intersect(player.position, PLAYER_SIZE, new Point(x, y), EXIT_SIZE)
+        );
+        if (
+            intersect(player.position, PLAYER_SIZE, new Point(x, y), EXIT_SIZE)
+        ) {
+            // alert("reach exit");
+            if (num_collected == num_goods) {
+                increaseLevel();
+            }
         }
     }
 }
-function cheat() {
-    if (isCheat) {
-        //cheat mode is on
+
+function increaseLevel() {
+    score = score + level * 100 + timeLeft;
+    level++;
+    bullets = 8;
+    num_collected = 0;
+    document.getElementById("level").innerHTML = level;
+    document.getElementById("scorer").innerHTML = score;
+    document.getElementById("bullet").innerHTML = bullets;
+    //playsnd("level complete");
+    //Make more monsters=-=
+    //reset whole game//reset timer as well
+    load();
+    // gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
+}
+
+function createPortal(x, y) {
+    var portal = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    document.getElementById("portals").appendChild(portal);
+    portal.setAttribute("x", x);
+    portal.setAttribute("y", y);
+    portal.setAttributeNS(
+        "http://www.w3.org/1999/xlink",
+        "xlink:href",
+        "#portall"
+    );
+}
+
+//create mulitple coins
+function createPortals() {
+    for (var i = 0; i < 2; i++) {
+        var x = 0;
+        var y = 0;
+        if (i == 0) {
+            x = 550;
+            y = 5;
+        } else {
+            x = 2;
+            y = 440;
+        }
+        createPortal(x, y);
     }
+}
+
+function reachPortal() {
+    var portals = document.getElementById("portals");
+    for (var i = 0; i < 2 /*exits.childNodes.length*/; i++) {
+        var portal = portals.childNodes.item(i);
+        var x = parseInt(portal.getAttribute("x"));
+        var y = parseInt(portal.getAttribute("y"));
+        // console.log("x is " + x);
+        // console.log("y is " + y);
+        if (
+            intersect(player.position, PLAYER_SIZE, new Point(x, y), EXIT_SIZE)
+        ) {
+            // alert("reach exit");
+            if (x == 550 && y == 5) {
+                // console.log("use portal");
+                player.position = new Point(2, 440);
+            }
+            // if (x == 2 && y == 440) {
+            //     console.log("use another portal");
+            //     player.position = new Point(550, 5);
+            // }
+        }
+    }
+}
+function moveVerticalPlatform() {
+    var vertical = document.getElementById("verticalPlatform");
+    var y = parseInt(vertical.getAttribute("y"));
+    if (verticaldirection == "up") {
+        //stopping condition
+        if (y < 60) {
+            //platform go down
+            verticaldirection = "down";
+        }
+        //direction going up
+        vertical.setAttribute("y", y - verticalPlatformSpeed);
+    } else {
+        if (y > 360) {
+            //platform go down
+            verticaldirection = "up";
+        }
+        //direction going up
+        vertical.setAttribute("y", y + verticalPlatformSpeed);
+    }
+}
+
+function restart() {
+    // Remove objects
+    cleanUpGroup("name_tag", false);
+    cleanUpGroup("monsters", false);
+    cleanUpGroup("bullets", false);
+    cleanUpGroup("highscoretext", false);
+    cleanUpGroup("GTs", false);
+    cleanUpGroup("platforms", true);
+    if (DP1 != null) {
+        disappear(DP1);
+        DP1 = null;
+    }
+    if (DP2 != null) {
+        disappear(DP2);
+        DP2 = null;
+    }
+
+    document
+        .getElementById("highscoretable")
+        .style.setProperty("visibility", "hidden", null);
+    start_game();
 }
